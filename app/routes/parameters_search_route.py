@@ -5,7 +5,8 @@ from returns.result import Success
 from app.repository.neo4j_repository import get_groups_by_country, get_targets_by_group_and_year
 from app.service.mongo_service import get_terror_list_by_date
 from app.repository.mongo_repository import get_most_death_by_attack_type, get_average_death_by_region, \
-    get_all_terror_events_with_location, get_groups_with_common_targets_type, get_most_active_groups_per_country
+    get_all_terror_events_with_location, get_groups_with_common_targets_type, get_most_active_groups_per_country, \
+    get_most_common_attack_type_per_country
 
 
 def parse_json(data):
@@ -101,6 +102,14 @@ def get_targets_by_group_year():
     if not country.isnumeric() :
         return jsonify({"Error country is not provided"}), 400
     res = get_targets_by_group_and_year(int(country))
+    if isinstance(res, Success):
+        return json.dumps(res.unwrap()), 200
+    return jsonify({"Error:": res.failure()}), 500
+
+@statistics_blueprint.route("/most-active-targets", methods=["GET"])
+def most_common_attack_type_per_country():
+    country = request.args.get("country")
+    res = get_most_common_attack_type_per_country(country)
     if isinstance(res, Success):
         return json.dumps(res.unwrap()), 200
     return jsonify({"Error:": res.failure()}), 500

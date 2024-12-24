@@ -344,3 +344,69 @@ def get_most_active_groups_per_country(country: str = None) -> Result[List, str]
         return Failure(f"An error occurred: {str(e)}")
 
 
+def get_most_common_attack_type_per_country(country: str = None) -> Result[List, str]:
+    pipeline = [
+
+        {
+            "$match": {
+                "location.country": country if country else {"$exists": True}
+            }
+        },
+        {
+            "$group": {
+                "_id": {
+                    "country": "$location.country",
+                    "attack_type": "$attack_type"
+                },
+                "groups": {
+                    "$addToSet": "$group_name"
+                }
+            }
+        },
+
+        {
+            "$project": {
+                "country": "$_id.country",
+                "attack_type": "$_id.attack_type",
+                "groups_count": {"$size": "$groups"},
+                "groups": 1,
+                "_id": 0
+            }
+        },
+
+        {
+            "$sort": {
+                "country": 1,
+                "groups_count": -1
+            }
+        },
+
+        {
+            "$group": {
+                "_id": "$country",
+                "most_common_attack": {
+                    "$first": {
+                        "attack_type": "$attack_type",
+                        "groups_count": "$groups_count"
+                    }
+                }
+            }
+        },
+        {
+            "$project": {
+                "country": "$_id",
+                "attack_type": "$most_common_attack.attack_type",
+                "groups_count": "$most_common_attack.groups_count",
+                "_id": 0
+            }
+        }
+    ]
+
+    try:
+
+        result = list(events_collection.aggregate(pipeline))
+        return Success(result)
+    except Exception as e:
+        return Failure(f"An error occurred: {str(e)}")
+
+
