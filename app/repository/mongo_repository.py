@@ -13,7 +13,7 @@ def get_terror_event_by_uuid(uuid: str) -> dict:
 
 
 
-
+# 1
 def get_most_death_by_attack_type(top_5: bool=False) -> Result[List, str]:
     pipeline = [
         {
@@ -32,7 +32,7 @@ def get_most_death_by_attack_type(top_5: bool=False) -> Result[List, str]:
     except Exception as e:
         Failure(f"An error occurred: {str(e)}")
 
-
+# 2
 def get_average_death_by_region(top_5: bool=False) -> Result[List, str]:
     pipeline = [
         {"$match": {
@@ -82,7 +82,7 @@ def get_average_death_by_region(top_5: bool=False) -> Result[List, str]:
         return Failure(f"An error occurred: {str(e)}")
 
 
-
+# 3
 def get_top_5_attacking_group() -> Result[List, str]:
     pipeline = [
         {"$match": {
@@ -104,7 +104,7 @@ def get_top_5_attacking_group() -> Result[List, str]:
         return Failure(f"An error occurred: {str(e)}")
 
 
-
+# 7
 def get_terror_events_by_time_range(start_date: datetime, end_date: datetime) -> Result[List, str]:
     query = {
         "date": {
@@ -128,7 +128,7 @@ def get_terror_events_by_time_range(start_date: datetime, end_date: datetime) ->
     except Exception as e:
         return Failure(f"An error occurred: {str(e)}")
 
-
+# 7
 def get_all_terror_events_with_location() -> Result[List, str]:
     query = {
         "$and":[
@@ -147,7 +147,7 @@ def get_all_terror_events_with_location() -> Result[List, str]:
     except Exception as e:
         return Failure(f"An error occurred: {str(e)}")
 
-
+# 11
 def get_groups_with_common_targets_type(country: str = None) -> Result[List, str]:
     pipeline = [
         {
@@ -213,7 +213,7 @@ def get_groups_with_common_targets_type(country: str = None) -> Result[List, str
 
 
 
-
+# 8
 def get_most_active_groups_per_country(country: str = None) -> Result[List, str]:
     pipeline = [
         {
@@ -266,7 +266,7 @@ def get_most_active_groups_per_country(country: str = None) -> Result[List, str]
     except Exception as e:
         return Failure(f"An error occurred: {str(e)}")
 
-
+# 14
 def get_most_common_attack_type_per_country(country: str = None) -> Result[List, str]:
     pipeline = [
 

@@ -1,4 +1,3 @@
-from bson import json_util
 from flask import Blueprint, json, jsonify, request
 from returns.result import Success
 
@@ -7,10 +6,8 @@ from app.service.mongo_service import get_terror_list_by_date
 from app.repository.mongo_repository import get_most_death_by_attack_type, get_average_death_by_region, \
     get_all_terror_events_with_location, get_groups_with_common_targets_type, get_most_active_groups_per_country, \
     get_most_common_attack_type_per_country
+from app.utils import parse_json
 
-
-def parse_json(data):
-    return json.loads(json_util.dumps(data))
 statistics_blueprint = Blueprint("statistics", __name__)
 
 
@@ -21,7 +18,7 @@ def get_most_death_by_attack():
     if isinstance(res, Success):
         return json.dumps(res.unwrap()), 200
 
-    return jsonify({"Error:": res.failure()}), 400
+    return jsonify({"Error:": res.failure()}), 500
 
 
 @statistics_blueprint.route("/average-death-by-region", methods=["GET"])
@@ -31,7 +28,7 @@ def get_average_death():
     if isinstance(res, Success):
         return json.dumps(res.unwrap()), 200
 
-    return jsonify({"Error:": res.failure()}), 400
+    return jsonify({"Error:": res.failure()}), 500
 
 @statistics_blueprint.route("/top-5-attacking-group", methods=["GET"])
 def get_top_5_attacking_group():
@@ -39,7 +36,8 @@ def get_top_5_attacking_group():
     if isinstance(res, Success):
         return json.dumps(res.unwrap()), 200
 
-    return jsonify({"Error:": res.failure()}), 400
+    return jsonify({"Error:": res.failure()}), 500
+
 
 @statistics_blueprint.route("/terror-by-date", methods=["POST"])
 def get_terror_by_date():
@@ -53,7 +51,7 @@ def get_terror_by_date():
     if isinstance(res, Success):
          return parse_json(res.unwrap()), 200
 
-    return jsonify({"Error:": res.failure()}), 400
+    return jsonify({"Error:": res.failure()}), 500
 
 
 @statistics_blueprint.route("/all-terrors", methods=["GET"])
@@ -62,7 +60,7 @@ def get_all_terrors():
     if isinstance(res, Success):
         return parse_json(res.unwrap()), 200
 
-    return jsonify({"Error:": res.failure()}), 400
+    return jsonify({"Error:": res.failure()}), 500
 
 
 @statistics_blueprint.route("/group-with-common-target", methods=["GET"])
@@ -77,6 +75,7 @@ def get_group_with_common_target():
 
     return jsonify({"Error:": res.failure()}), 500
 
+
 @statistics_blueprint.route("/most-active-group", methods=["GET"])
 def get_most_active_group():
     country = request.args.get("country")
@@ -87,6 +86,7 @@ def get_most_active_group():
         return json.dumps(res.unwrap()), 200
 
     return jsonify({"Error:": res.failure()}), 500
+
 
 @statistics_blueprint.route("/group-attack-by-country", methods=["GET"])
 def group_attack_by_country():
@@ -105,6 +105,7 @@ def get_targets_by_group_year():
     if isinstance(res, Success):
         return json.dumps(res.unwrap()), 200
     return jsonify({"Error:": res.failure()}), 500
+
 
 @statistics_blueprint.route("/most-active-targets", methods=["GET"])
 def most_common_attack_type_per_country():

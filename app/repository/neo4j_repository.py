@@ -1,8 +1,7 @@
-from returns.result import Success
 from returns.result import Result, Success, Failure
 from app.db.neo4j_database import driver
 
-
+# 15
 def get_target_type_with_group_attack() -> Result:
     with driver.session() as session:
         query = """
@@ -16,7 +15,7 @@ def get_target_type_with_group_attack() -> Result:
         except Exception as e:
             return Failure(f"An error occurred: {str(e)}")
 
-
+# 16
 def get_groups_by_country() -> Result:
     query = """
         MATCH (c:Country)<-[:EVENT]-(a:Attack_grope)
@@ -25,14 +24,14 @@ def get_groups_by_country() -> Result:
     try:
         with driver.session() as session:
             result = session.run(query)
-            data = [{"Country": record["Country"], "AttackGroups": record["AttackGroups"]} for record in result]
+            data = [{"country": record["Country"], "attack_groups": record["AttackGroups"]} for record in result]
             return Success(data)
     except Exception as e:
         return Failure(f"An error occurred: {str(e)}")
 
 
 
-
+# 19
 def get_targets_by_group_and_year(year: int) -> Result:
     query = """
         MATCH (t:Target)<-[:EVENT {year: $year}]-(a:Attack_grope)
@@ -41,7 +40,7 @@ def get_targets_by_group_and_year(year: int) -> Result:
     try:
         with driver.session() as session:
             result = session.run(query, year=year)
-            data = [{"Target": record["Target"], "AttackGroups": record["AttackGroups"]} for record in result]
+            data = [{"target": record["Target"], "attack_groups": record["AttackGroups"]} for record in result]
             return Success(data)
     except Exception as e:
         return Failure(f"An error occurred: {str(e)}")
