@@ -24,7 +24,8 @@ def get_groups_by_country() -> Result:
     try:
         with driver.session() as session:
             result = session.run(query)
-            data = [{"country": record["Country"], "attack_groups": record["AttackGroups"]} for record in result]
+            data = [{"country": record["Country"], "attack_groups": list(set(record["AttackGroups"]))} for record in result]
+
             return Success(data)
     except Exception as e:
         return Failure(f"An error occurred: {str(e)}")
@@ -35,7 +36,7 @@ def get_groups_by_country() -> Result:
 def get_targets_by_group_and_year(year: int) -> Result:
     query = """
         MATCH (t:Target)<-[:EVENT {year: $year}]-(a:Attack_grope)
-        RETURN t.target_type AS Target, collect(a.name) AS AttackGroups
+        RETURN DISTINCT t.target_type AS Target, collect(DISTINCT a.name) AS AttackGroups
     """
     try:
         with driver.session() as session:
@@ -47,3 +48,6 @@ def get_targets_by_group_and_year(year: int) -> Result:
 
 
 
+l = get_groups_by_country().unwrap()
+
+s = 5
